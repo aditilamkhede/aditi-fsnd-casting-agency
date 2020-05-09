@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Movies</title>
+
+    <!-- Link External Stylesheets -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script type="text/javascript" src="js/main.js"></script>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <nav class="menu" id="myTopnav">
+          <a href="index.html" class="active">Home</a>
+          <a href="movie.html">Movies</a>
+          <a href="actor.html">Actors</a>
+          <a href="#contact">Contact</a>
+          <a href="#about">About</a>
+          <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+            <i class="fa fa-bars"></i>
+          </a>
+        </nav>
+      </div>
+      <div class="main">
+        <section title="Add Movies">
+          <div class="form-wrapper">
+            <form class="frm-movie" action="" method="post">
+              <div class="flex-wrapper">
+                <div class="flex-child flex-hd">
+                  <h3>Add Movie</h3>
+                </div>
+                <div class="flex-child">
+                  <!-- <label for="frmName">Name: </label> -->
+                  <input type="text" id="frmTitle" name="" value="" placeholder="Movie Title" required>
+                </div>
+                <div class="flex-child">
+                  <!-- <label for="frmEmail">Email: </label> -->
+                  <input type="date" id="frmDate" name="" value="" placeholder="Release Date" required>
+                </div>
+                <div class="flex-child flex-btn">
+                  <button id="btnSubmit" type="submit" name="button">Submit</button>
+                </div>
+                <!-- <div class="flex-child">
+                  <button id="btnClose" type="button" name="button" onclick="CloseForm()">Close</button>
+                </div> -->
+              </div>
+            </form>
+          </div>
+        </section>
+        <section id="">
+
+        </section>
+      </div>
+    </div>
+  </body>
+</html>

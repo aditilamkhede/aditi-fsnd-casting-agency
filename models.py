@@ -36,9 +36,10 @@ class Movies(db.Model):
         backref=db.backref('movies', lazy=True))
 
 
-    def __init__(self, arg):
+    def __init__(self, title, release_date):
         super(Movies, self).__init__()
-        self.arg = arg
+        self.title = title
+        self.release_date = release_date
 
     def insert(self):
         db.session.add(self)
@@ -66,9 +67,11 @@ class Actors(db.Model):
     age = Column(Integer)
     gender = Column(String(20))
 
-    def __init__(self, arg):
+    def __init__(self, name, age, gender):
         super(Actors, self).__init__()
-        self.arg = arg
+        self.name = name
+        self.age = age
+        self.gender = gender
 
     def insert(self):
         db.session.add(self)
