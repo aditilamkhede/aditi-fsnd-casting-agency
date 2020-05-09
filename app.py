@@ -22,13 +22,14 @@ DATA_PER_PAGE = 10
 YOUR_CLIENT_SECRET = "-Cvi9-nsnz7vOMnv9OApmF4Twd1a7afTiXo2I42Zrl4WwO_clj6cbDRdH7Q9_guY"
 YOUR_CALLBACK_URL = "http://localhost:5000/callback"
 SECRET_KEY = "aditicapstonendsecret"
+AUTH0_AUTHORIZE_URL = "https://udacity-nd-capstone.auth0.com/authorize?audience=casting&response_type=token&client_id=9EalhHTVUmqwMnnF94DT00JuoIHkYtcx&redirect_uri=http://localhost:5000/callback"
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRET_KEY
     setup_db(app)
-    CORS(app)
+    CORS(app, expose_headers='Authorization')
 
     oauth = OAuth(app)
 
@@ -49,10 +50,10 @@ def create_app(test_config=None):
         print('In after_request')
         response.headers.add('Access-Control-Allow-Headers', 'Content-Type, Authorization, true')
         response.headers.add('Access-Control-Allow-Methods', 'GET,POST,PATCH,PUT,DELETE,OPTIONS')
-        if session.get('jwt_token'):
-            print('Found it.....', request.headers)
-            response.headers.add('Authorization', 'Bearer '+ str(session['jwt_token']))
-        print(response.headers)
+        # if session.get('jwt_token'):
+        #     # print('Found it.....', request.headers)
+        #     response.headers.add('Authorization', 'Bearer '+ str(session['jwt_token']))
+        # print(response.headers)
         return response
 
     @app.route('/login')
@@ -70,9 +71,8 @@ def create_app(test_config=None):
             print(auth0)
             token = auth0.authorize_access_token()
             jwt_token = token['id_token']
-            print(jwt_token)
-            # jwt_token = auth0.authorize_access_token()[‘id_token’]
-            # print('Is Error')
+            # print(jwt_token)
+
             session['jwt_token'] = jwt_token
 
             resp = auth0.get('userinfo')
@@ -89,24 +89,24 @@ def create_app(test_config=None):
         except Exception as e:
             print('exception',e)
 
-        # return redirect('/')
-        response = make_response(redirect('/'))
-        response.headers['Authorization'] = 'Bearer '+ jwt_token
-        response.set_cookie('jwt_token', 'Bearer '+ jwt_token)
-        # response.headers.set('Authorization', 'Bearer '+ str(session['jwt_payload']))
-        # print('session - ', str(session['jwt_payload']))
-        return response
+        return redirect('/')
+        # response = make_response(redirect('/'))
+        # response.headers['Authorization'] = 'Bearer '+ jwt_token
+        # response.set_cookie('jwt_token', 'Bearer '+ jwt_token)
+        # return response
 
 
     @app.route('/')
+    # @cross_origin
     def index():
         # token = request.args.get('access_token', default = '', type = str)
         # print('token', token)
         result = "Coming Soon!!"
-        print("request.headers in Index - ", request.headers)
+        # print("request.headers in Index - ", request.headers)
         return render_template('index.html'   )
         # response = make_response(render_template('index.html'))
-        # response.headers.set('Authorization', 'Bearer '+ str(session['jwt_payload']))
+        # # response.headers.set('Authorization', 'Bearer '+ str(session['jwt_payload']))
+        # response.set_cookie('jwt_token', 'Bearer '+ session['jwt_token'])
         # return response
 
 

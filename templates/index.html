@@ -6,31 +6,9 @@
     <title>Casting Agency</title>
 
     <!-- Link External Stylesheets -->
-    <!-- <link rel="stylesheet" href="css/style.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
-    <!-- <script type="text/javascript" src="/templates/js/main.js"></script> -->
-    <script type="text/javascript">
-
-      window.addEventListener('load', (event) => {
-        console.log('page is fully loaded');
-        getHeaders();
-      });
-      function getHeaders() {
-        console.log(document.cookie);
-        var formData = new FormData();
-        var client = new XMLHttpRequest();
-        client.open('GET', '/')
-        // console.log(request.headers)
-        // const header = {
-        //   headers: new HttpHeaders()
-        //     .set('Authorization',  `Bearer ${abcd}`)
-        // };
-        client.setRequestHeader('Authorization', document.cookie['jwt_token'])
-        client.send(formData);
-        // return header;
-      }
-
-    </script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
 
   </head>
   <body>
@@ -40,12 +18,12 @@
           <a href="javascript:void(0);" class="icon" onclick="myFunction()">
             <i class="fa fa-bars"></i>
           </a>
-          <a href="index.html" class="active">Home</a>
-          <a href="movie.html">Movies</a>
-          <a href="actor.html">Actors</a>
+          <a href="/" class="active">Home</a>
+          <a href="/movies">Movies</a>
+          <a href="actors">Actors</a>
           <a href="#contact">Contact</a>
           <a href="#about">About</a>
-
+          <a href="{{AUTH0_AUTHORIZE_URL}}">Login</a>
         </nav>
       </div>
       <div class="main">
