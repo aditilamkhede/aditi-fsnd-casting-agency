@@ -89,12 +89,21 @@ def create_app(test_config=None):
         except Exception as e:
             print('exception',e)
 
-        return redirect('/')
-        # response = make_response(redirect('/'))
-        # response.headers['Authorization'] = 'Bearer '+ jwt_token
-        # response.set_cookie('jwt_token', 'Bearer '+ jwt_token)
-        # return response
+        # return redirect('/dashboard')
+        response = make_response(redirect('/dashboard'))
+        response.headers['Authorization'] = 'Bearer '+ jwt_token
+        response.set_cookie('jwt_token', 'Bearer '+ jwt_token)
+        return response
 
+
+    # /server.py
+
+    @app.route('/dashboard')
+    @requires_auth()
+    def dashboard():
+        return render_template('dashboard.html',
+                   userinfo=session['profile'],
+                   userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
 
     @app.route('/')
     # @cross_origin
