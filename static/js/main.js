@@ -72,20 +72,11 @@ function GetMovies() {
   var client = new XMLHttpRequest();
   client.open('GET', 'http://localhost:5000/movies');
   const header = client.setRequestHeader('Authorization', `Bearer ${token}`);
-  client.send(null);
-  return client.responseText;
+  client.send();
 
-  $.ajax({
-   type : "GET",
-   url : "http://localhost:5000/movies",
-   beforeSend: function(xhr){xhr.setRequestHeader('Authorization', `Bearer ${token}`);},
-   success : function(result) {
-       //set your variable to the result
-   },
-   error : function(result) {
-     //handle the error
-   }
- });
+  // $http({method: 'GET', url: '/movies', headers: {
+  // 'Authorization': `Bearer ${token}`}
+// });
 
   // return true;
 }
