@@ -1,3 +1,5 @@
+const AUTH0_AUTHORIZE_URL = "https://udacity-nd-capstone.auth0.com/authorize?audience=casting&response_type=token&client_id=9EalhHTVUmqwMnnF94DT00JuoIHkYtcx&redirect_uri=http://localhost:5000/callback"
+
 function myFunction() {
   var x = document.getElementById("myTopnav");
   if (x.className === "menu") {
@@ -8,17 +10,20 @@ function myFunction() {
 }
 
 window.addEventListener('load', (event) => {
-  console.log('page is fully loaded', window.location.href);
-  // window.location.href = window.location.href + "?access_token="+ getHeaders();
+  getHeaders();
+  // console.log('page is fully loaded', getHeaders());
+  //window.location.href = window.location.href + "?access_token="+ getHeaders();
 });
 function getHeaders() {
+  console.log('getHeaders');
   // console.log(document.cookie);
+  let token = getCookie('jwt_token');
+  console.log('getHeaders', token);
+
   var formData = new FormData();
   var client = new XMLHttpRequest();
-  client.open('GET', '/');
-  let token = getCookie('jwt_token');
-  console.log(token);
-  const header = client.setRequestHeader('Authorization', token);
+  client.open('GET', '/movies');
+  const header = client.setRequestHeader('Authorization', `Bearer ${token}`);
   client.send(formData);
 
   // console.log(request.headers)
@@ -31,9 +36,11 @@ function getHeaders() {
   // XMLHttpRequest.prototype.origOpen = XMLHttpRequest.prototype.open;
   // XMLHttpRequest.prototype.open   = function () {
   // this.origOpen.apply(this, arguments);
-  // this.setRequestHeader('Authorization' , 'Bearer ' + document.cookie['jwt_token']);
+  // const header = {
+  //   headers: this.setRequestHeader('Authorization' , `Bearer ${token}`)
   // };
-  return header;
+  // return header;
+// }
 }
 
 function getCookie(name) {
@@ -55,3 +62,30 @@ function getCookie(name) {
         // Return null if not found
         return null;
     }
+
+function GetMovies() {
+  console.log('In Get Movies')
+  let token = getCookie('jwt_token');
+  console.log('GetMovies', token);
+
+  var formData = new FormData();
+  var client = new XMLHttpRequest();
+  client.open('GET', 'http://localhost:5000/movies');
+  const header = client.setRequestHeader('Authorization', `Bearer ${token}`);
+  client.send(null);
+  return client.responseText;
+
+  $.ajax({
+   type : "GET",
+   url : "http://localhost:5000/movies",
+   beforeSend: function(xhr){xhr.setRequestHeader('Authorization', `Bearer ${token}`);},
+   success : function(result) {
+       //set your variable to the result
+   },
+   error : function(result) {
+     //handle the error
+   }
+ });
+
+  // return true;
+}

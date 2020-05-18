@@ -31,19 +31,19 @@ def create_app(test_config=None):
     setup_db(app)
     CORS(app, expose_headers='Authorization')
 
-    oauth = OAuth(app)
-
-    auth0 = oauth.register(
-        'auth0',
-        client_id='9EalhHTVUmqwMnnF94DT00JuoIHkYtcx',
-        client_secret=YOUR_CLIENT_SECRET,
-        api_base_url='https://udacity-nd-capstone.auth0.com',
-        access_token_url='https://udacity-nd-capstone.auth0.com/oauth/token',
-        authorize_url='https://udacity-nd-capstone.auth0.com/authorize',
-        client_kwargs={
-            'scope': 'openid profile email',
-        },
-    )
+    # oauth = OAuth(app)
+    #
+    # auth0 = oauth.register(
+    #     'auth0',
+    #     client_id='9EalhHTVUmqwMnnF94DT00JuoIHkYtcx',
+    #     client_secret=YOUR_CLIENT_SECRET,
+    #     api_base_url='https://udacity-nd-capstone.auth0.com',
+    #     access_token_url='https://udacity-nd-capstone.auth0.com/oauth/token',
+    #     authorize_url='https://udacity-nd-capstone.auth0.com/authorize',
+    #     client_kwargs={
+    #         'scope': 'openid profile email',
+    #     },
+    # )
 
     @app.after_request
     def after_request(response):
@@ -62,61 +62,77 @@ def create_app(test_config=None):
         return auth0.authorize_redirect(redirect_uri=YOUR_CALLBACK_URL)
 
 
+    @app.route('/logout')
+    def logout():
+        # Clear session stored data
+        session.clear()
+        # Redirect user to logout endpoint
+        params = {'returnTo': url_for('home', _external=True), 'client_id': '9EalhHTVUmqwMnnF94DT00JuoIHkYtcx'}
+        return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
+
+
     @app.route('/callback')
     def callback_handling():
         print('In callback handling')
         jwt_token = ""
         try:
             # Handles response from token endpoint
-            print(auth0)
-            token = auth0.authorize_access_token()
-            jwt_token = token['id_token']
+            # print(auth0)
+            # token = auth0.authorize_access_token()
+            # jwt_token = token['id_token']
             # print(jwt_token)
 
             session['jwt_token'] = jwt_token
 
-            resp = auth0.get('userinfo')
-            userinfo = resp.json()
-            # print('Before session', userinfo)
-            # Store the user information in flask session.
-            session['jwt_payload'] = userinfo
-            # print('after session', session)
-            session['profile'] = {
-                'user_id': userinfo['sub'],
-                'name': userinfo['name'],
-                'picture': userinfo['picture']
-            }
+            # resp = auth0.get('userinfo')
+            # userinfo = resp.json()
+            # # print('Before session', userinfo)
+            # # Store the user information in flask session.
+            # session['jwt_payload'] = userinfo
+            # # print('after session', session)
+            # session['profile'] = {
+            #     'user_id': userinfo['sub'],
+            #     'name': userinfo['name'],
+            #     'picture': userinfo['picture']
+            # }
         except Exception as e:
             print('exception',e)
 
-        # return redirect('/dashboard')
-        response = make_response(redirect('/dashboard'))
-        response.headers['Authorization'] = 'Bearer '+ jwt_token
-        response.set_cookie('jwt_token', 'Bearer '+ jwt_token)
-        return response
+        return redirect('/')
+        # response = make_response(redirect('/dashboard'))
+        # response.headers['Authorization'] = 'Bearer '+ jwt_token
+        # response.set_cookie('jwt_token', 'Bearer '+ jwt_token)
+        # return response
 
-
-    # /server.py
 
     @app.route('/dashboard')
-    @requires_auth()
+    # @requires_auth()
     def dashboard():
-        return render_template('dashboard.html',
-                   userinfo=session['profile'],
-                   userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
+        # return render_template('dashboard.html',
+        #            userinfo=session['profile'],
+        #            userinfo_pretty=json.dumps(session['jwt_payload'], indent=4))
+        print('request.args', request.args)
+        token = request.args.get('access_token', default = '', type = str)
+        print('token', token)
+        session['jwt_token'] = token
+        response = make_response(render_template('dashboard.html'))
+        # response.headers.set('Authorization', 'Bearer '+ str(session['jwt_token']))
+        response.set_cookie('jwt_token', token)
+        return response
 
     @app.route('/')
     # @cross_origin
     def index():
-        # token = request.args.get('access_token', default = '', type = str)
-        # print('token', token)
+        token = request.args.get('access_token', default = '', type = str)
+        print('token', token)
+        session['jwt_token'] = token
         result = "Coming Soon!!"
         # print("request.headers in Index - ", request.headers)
-        return render_template('index.html'   )
-        # response = make_response(render_template('index.html'))
-        # # response.headers.set('Authorization', 'Bearer '+ str(session['jwt_payload']))
-        # response.set_cookie('jwt_token', 'Bearer '+ session['jwt_token'])
-        # return response
+        # return render_template('index.html'   )
+        response = make_response(render_template('index.html'))
+        # response.headers.set('Authorization', 'Bearer '+ str(session['jwt_payload']))
+        response.set_cookie('jwt_token', token)
+        return response
 
 
     def paginate_data(request, selection, isMovie):
@@ -138,11 +154,12 @@ def create_app(test_config=None):
     # Movies end points
     # end point to list all movies
     @app.route('/movies')
-    # @cross_origin(headers=["Content-Type", "Authorization"])
+    @cross_origin(headers=["Content-Type", "Authorization"])
     @requires_auth('get:lists')
     def get_movies(payload):
+        data = {}
         try:
-            print('In Movies')
+            print('In Movies1')
             movies = Movies.query.all()
             movs = paginate_data(request, movies, True)
 
@@ -150,15 +167,17 @@ def create_app(test_config=None):
                  raise AuthError('Movies not found.', status_code=404)
             # return jsonify({
             #     'success': False})
+            data = jsonify({
+                'success': True,
+                'movies': movs,
+                'total_movies': len(movies)
+                })
+            print('Movies data', movs)
         except Exception as e:
             print('error in movies')
             raise
 
-        return jsonify({
-            'success': True,
-            'movies': movs,
-            'total_movies': len(movies)
-            })
+        return render_template('movies.html', results=movs)
 
     # end point to add movie
     @app.route('/movies', methods=['POST'])
@@ -221,6 +240,7 @@ def create_app(test_config=None):
     # Actors end points
     # end point to get list of actors
     @app.route('/actors')
+    @requires_auth('get:lists')
     def get_actors_all():
         # actors = "Check it Out!!"
         # return actors
@@ -236,11 +256,14 @@ def create_app(test_config=None):
             print('error in actors', e)
             raise
 
-        return jsonify({
+        data = jsonify({
             'success': True,
             'actors': acts,
             'total_actors': len(actors)
         })
+        print('actors list', acts)
+
+        return render_template('actors.html', results=acts)
 
     # end point to add actors
     @app.route('/actors', methods=['POST'])

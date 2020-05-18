@@ -1,0 +1,20 @@
+{% extends "index.html" %}
+<title>Hello from Flask</title>
+{% block title %}Actor | Lists{% endblock %}
+{% block content %}
+<div class="">
+  {% for data in results %}
+  <ul>
+    <li>
+      {{ data.title }}
+    </li>
+    <li>
+      {{ data }}
+    </li>
+    <li>
+      {{ data }}
+    </li>
+  </ul>
+  {% endfor %}
+</div>
+{% endblock %}

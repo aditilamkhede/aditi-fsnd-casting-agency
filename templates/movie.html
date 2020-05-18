@@ -15,13 +15,15 @@
       <div class="header">
         <nav class="menu" id="myTopnav">
           <a href="index.html" class="active">Home</a>
-          <a href="movie.html">Movies</a>
-          <a href="actor.html">Actors</a>
+          <!-- <a href="/movies">Movies</a> -->
+          <a href="javascript:void(0);" onclick="GetMovies();">Movies</a>
+          <a href="/actors">Actors</a>
           <a href="#contact">Contact</a>
           <a href="#about">About</a>
           <a href="javascript:void(0);" class="icon" onclick="myFunction()">
             <i class="fa fa-bars"></i>
           </a>
+          <a href="{{AUTH0_AUTHORIZE_URL}}">Login</a>
         </nav>
       </div>
       <div class="main">
@@ -50,7 +52,10 @@
             </form>
           </div>
         </section>
-        <section id="">
+        <section id="" title="Movie List">
+          <div class="">
+            {{ data }}
+          </div>
 
         </section>
       </div>

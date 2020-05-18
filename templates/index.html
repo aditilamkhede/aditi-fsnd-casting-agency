@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Casting Agency</title>
+    <title>Casting Agency Index</title>
 
     <!-- Link External Stylesheets -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
@@ -19,17 +19,21 @@
             <i class="fa fa-bars"></i>
           </a>
           <a href="/" class="active">Home</a>
-          <a href="/movies">Movies</a>
+          <!-- <a href="/movies">Movies</a> -->
+          <a href="javascript:void(0);" onclick="GetMovies();">Movies</a>
           <a href="actors">Actors</a>
+          <!-- <li {% if request.endpoint == 'actors' %} class="active" {% endif %}><a href="{{ url_for('get_actors_all') }}">Actors</a></li> -->
           <a href="#contact">Contact</a>
           <a href="#about">About</a>
-          <a href="{{AUTH0_AUTHORIZE_URL}}">Login</a>
+          <a href="https://udacity-nd-capstone.auth0.com/authorize?audience=casting&response_type=token&client_id=9EalhHTVUmqwMnnF94DT00JuoIHkYtcx&redirect_uri=http://localhost:5000/callback">Login</a>
         </nav>
       </div>
       <div class="main">
         <p><strong>
           WE ARE A FULL-SERVICE CASTING AGENCY, SETTING THE INDUSTRY STANDARD FOR OVER 20 YEARS
         </strong></p>
+
+        {% block content %}{% endblock %}
       </div>
       <div class="footer box">
         <div class="ftName">

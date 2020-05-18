@@ -1,8 +1,10 @@
 import json
 from flask import request, _request_ctx_stack, abort
+# , session, redirect
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
+import http.client
 
 
 AUTH0_DOMAIN = 'udacity-nd-capstone.auth0.com'
@@ -35,7 +37,8 @@ class AuthError(Exception):
 
 
 def get_token_auth_header():
-    print('get_token_auth_header request.headers', request.headers)
+    # get_token_header()
+    print('get_token_auth_header request.headers')
     auth = request.headers.get('Authorization', None)
     if not auth:
        raise AuthError({
@@ -45,24 +48,29 @@ def get_token_auth_header():
 
     parts = auth.split()
     if parts[0].lower() != 'bearer':
+       print('in1', parts[0].lower())
        raise AuthError({
            'code': 'invalid_header',
            'description': 'Authorization header must start with "Bearer".'
        }, 401)
 
     elif len(parts) == 1:
+       print('in12')
        raise AuthError({
            'code': 'invalid_header',
            'description': 'Token not found.'
        }, 401)
 
     elif len(parts) > 2:
+       print('in3')
        raise AuthError({
            'code': 'invalid_header',
            'description': 'Authorization header must be bearer token.'
        }, 401)
 
+    # print('in 5')
     token = parts[1]
+    # print('Before return in get_token_auth_header')
     return token
 
 '''
@@ -78,6 +86,7 @@ def get_token_auth_header():
 '''
 
 def check_permissions(permission, payload):
+    print('In Check Permission')
     if payload is None:
         raise AuthError({
             'code': 'No_payload',
@@ -195,6 +204,7 @@ def requires_auth(permission=''):
         @wraps(f)
         def wrapper(*args, **kwargs):
             token = get_token_auth_header()
+            # print('requires_auth', token)
             try:
                 payload = verify_decode_jwt(token)
             except AuthError as err:
@@ -204,3 +214,21 @@ def requires_auth(permission=''):
 
         return wrapper
     return requires_auth_decorator
+
+
+
+def get_token_header():
+    print('request.cookies', request.cookies)
+    conn = http.client.HTTPSConnection("http://127.0.0.1:5000")
+
+    headers = {
+        'content-type': "application/json",
+        'authorization': "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikg2U001cFZaSlRma25Ua0NQWFlzUyJ9.eyJpc3MiOiJodHRwczovL3VkYWNpdHktbmQtY2Fwc3RvbmUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlYjI2NDZkMWNjMWFjMGMxNDhhOTliOSIsImF1ZCI6ImNhc3RpbmciLCJpYXQiOjE1ODk3ODMxODAsImV4cCI6MTU4OTc5MDM4MCwiYXpwIjoiOUVhbGhIVFZVbXF3TW5uRjk0RFQwMEp1b0lIa1l0Y3giLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImdldDpsaXN0cyJdfQ.holaJz2IcvJTMGLEvqFrSDZ1966Uy-q1nWURo12OtnHzuZQes2nfHfdtciZkkpJ87qzsRs8QnB0lyrTAV90MZPtdbC0z_785vrvQQZN0kz6uh6kTulqpgwJUJwvRjrYN-q5wVMsD66FgkE6mj-Nl8RjlSdtBz7Bfjg89MzZ7c3fX2QG3En_uWpA2KOkJu71vYegvXd6QMDj9OaFb3AgF1-uv8Mocpa98lYMOEk-H_mB7KEy67eCG3ys59D4_c4-F43DMW680m7rvuLrAbbTzhqBOAD-EMOYsOdCXzTd7bPZvRSsJwrSicaOwiPBSiwz0JnQMV0YoD5EsD77nPCu2XQ"
+        }
+
+    conn.request("GET", "/", headers=headers)
+
+    res = conn.getresponse()
+    data = res.read()
+
+    print(data.decode("utf-8"))
