@@ -8,9 +8,16 @@ function myFunction() {
     x.className = "menu";
   }
 }
-
+document.addEventListener("DOMContentLoaded", ready);
+function ready() {
+  console.log('I am in DOMContentLoaded ready');
+  var d = new Date();
+  console.log("I am triggered before flask request" + d.toLocaleTimeString());
+  // getHeaders();
+}
 window.addEventListener('load', (event) => {
-  getHeaders();
+  console.log('In Load');
+  // getHeaders();
   // console.log('page is fully loaded', getHeaders());
   //window.location.href = window.location.href + "?access_token="+ getHeaders();
 });
@@ -62,21 +69,85 @@ function getCookie(name) {
         // Return null if not found
         return null;
     }
+$(document).ready( function() {
+  console.log("In Document Ready");
+  let token = getCookie('jwt_token');
+  $.ajaxSetup({
+    headers:{
+      'Authorization': `Bearer ${token}`
+    }
+  });
+  
+  //  $('#navMovies').on('click', function(event) {
+  //    console.log("in Click");
+  //
+  //   let token = getCookie('jwt_token');
+  //   $.ajaxSetup({
+  //     headers:{
+  //       'Authorization': `Bearer ${token}`
+  //     }
+  //   });
+  //   $link = $(this);
+  //
+  //   $.get('http://localhost:5000/movies', {
+  //     headers: {'Authorization': `Bearer ${token}`}
+  //   })
+  //   .done(function(data) {
+  //     console.log( "second success", data);
+  //     data = data.data
+  //     // window.location.replace(window.location.href);
+  //     // window.location.href = $link.attr('href');
+  //     $(this).html = data.data;
+  //   });
+  //   console.log('After html');
+  //   event.preventDefault();
+  //   // $.ajax();
+  //   // GetMovies();
+  // });
+});
+// $(document).on("pageinit",function(){
+//   GetMovies();
+// });
 
 function GetMovies() {
-  console.log('In Get Movies')
+  console.log('In Get Movies');
+  // console.log('$link', $link);
   let token = getCookie('jwt_token');
   console.log('GetMovies', token);
 
-  var formData = new FormData();
-  var client = new XMLHttpRequest();
-  client.open('GET', 'http://localhost:5000/movies');
-  const header = client.setRequestHeader('Authorization', `Bearer ${token}`);
-  client.send();
+  // var formData = new FormData();
+  // var client = new XMLHttpRequest();
+  // client.open('GET', 'http://localhost:5000/movies');
+  // const header = client.setRequestHeader('Authorization', `Bearer ${token}`);
+  // client.send();
 
-  // $http({method: 'GET', url: '/movies', headers: {
-  // 'Authorization': `Bearer ${token}`}
-// });
+  // fetch('/movies', {
+  //   method: 'GET',
+  //   'Content-Type': 'application/json',
+  //   redirect: 'manual',
+  //   headers: {'Authorization': `Bearer ${token}`}
+  // }).then(function (response) {
+  //   console.log(response);
+  //   // return response.json();
+  //   return window.location.href="/movies";
+  // });
 
-  // return true;
+  $.ajax({
+         url: "http://localhost:5000/movies",
+         // data: { signature: authHeader },
+         type: "GET",
+         beforeSend: function(xhr){xhr.setRequestHeader('Authorization', `Bearer ${token}`);},
+         headers: {"Authorization": `Bearer ${token}`},
+         success: function(result) {
+           console.log('Success!'+result);
+           // window.location.href = $link.attr('href');
+           // document.write(result);
+           // window.location="/movies";
+         }
+      })
+      .done(function(response) {
+        console.log( "second success", response);
+        // window.location.replace(window.location.href);
+        // window.location.href = $link.attr('href');
+      });
 }

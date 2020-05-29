@@ -6,6 +6,7 @@
     <title>Casting Agency Index</title>
 
     <!-- Link External Stylesheets -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> -->
     <script type="text/javascript" src="{{ url_for('static', filename='js/main.js') }}"></script>
@@ -19,8 +20,9 @@
             <i class="fa fa-bars"></i>
           </a>
           <a href="/" class="active">Home</a>
-          <!-- <a href="/movies">Movies</a> -->
-          <a href="javascript:void(0);" onclick="GetMovies();">Movies</a>
+          <a id="navMovies" href="/movies">Movies</a>
+          <!-- <li {% if request.endpoint == 'movies' %} class="active" {% endif %}><a id="navMovies" href="{{ url_for('get_movies') }}">Movies</a></li> -->
+          <!-- <a href="javascript:void(0);" onclick="GetMovies();">Movies</a> -->
           <a href="actors">Actors</a>
           <!-- <li {% if request.endpoint == 'actors' %} class="active" {% endif %}><a href="{{ url_for('get_actors_all') }}">Actors</a></li> -->
           <a href="#contact">Contact</a>

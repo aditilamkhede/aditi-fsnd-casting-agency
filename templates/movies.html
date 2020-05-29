@@ -2,19 +2,54 @@
 <title>Hello from Flask</title>
 {% block title %}Actor | Lists{% endblock %}
 {% block content %}
-<div class="">
+<!-- {% for data in results %}
+<h3>{{ data.movies }}</h3>
+	<ul class="items">
+		{% for movie in data.movies %}
+		<li>
+			<a href="/movies/{{ movie.id }}">
+				<i class="fas fa-music"></i>
+				<div class="item">
+					<h5>{{ movie.title }}</h5>
+				</div>
+			</a>
+      <div class="item">
+        <h5>{{ movie.release_date }}</h5>
+      </div>
+		</li>
+		{% endfor %}
+	</ul>
+{% endfor %} -->
+<div class="gdContainer">
+  <div class="gdHeader">
+    <div class="hdItem">
+      <h3>ID</h3>
+    </div>
+    <div class="hdItem">
+      <h3>Movie Title</h3>
+    </div>
+    <div class="hdItem">
+      <h3>Release Date</h3>
+    </div>
+  </div>
+  <div class="line">
+
+  </div>
+  <div class="gdMain">
+
   {% for data in results %}
-  <ul>
-    <li>
+  <!-- <ul> -->
+    <div class="item">
+      {{ data.id }}
+    </div>
+    <div class="item">
       {{ data.title }}
-    </li>
-    <li>
-      {{ data }}
-    </li>
-    <li>
-      {{ data }}
-    </li>
-  </ul>
+    </div>
+    <div class="item">
+      {{ data.release_date.strftime('%Y-%m-%d') }}
+    </div>
+  <!-- </ul> -->
   {% endfor %}
+  </div>
 </div>
 {% endblock %}

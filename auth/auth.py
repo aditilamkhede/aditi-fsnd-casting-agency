@@ -1,10 +1,11 @@
 import json
 from flask import request, _request_ctx_stack, abort
 # , session, redirect
+import functools
+import flask
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
-import http.client
 
 
 AUTH0_DOMAIN = 'udacity-nd-capstone.auth0.com'
@@ -215,20 +216,15 @@ def requires_auth(permission=''):
         return wrapper
     return requires_auth_decorator
 
+def no_cache(view):
+    print('First no cache')
+    @functools.wraps(view)
+    def no_cache_impl(*args, **kwargs):
+        response = flask.make_response(view(*args, **kwargs))
+        token = request.cookies.get('jwt_token')
+        print('no_cache token', token)
+        # response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, max-age=0'
+        response.headers.set('Authorization', 'Bearer '+ token)
+        return response
 
-
-def get_token_header():
-    print('request.cookies', request.cookies)
-    conn = http.client.HTTPSConnection("http://127.0.0.1:5000")
-
-    headers = {
-        'content-type': "application/json",
-        'authorization': "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ikg2U001cFZaSlRma25Ua0NQWFlzUyJ9.eyJpc3MiOiJodHRwczovL3VkYWNpdHktbmQtY2Fwc3RvbmUuYXV0aDAuY29tLyIsInN1YiI6ImF1dGgwfDVlYjI2NDZkMWNjMWFjMGMxNDhhOTliOSIsImF1ZCI6ImNhc3RpbmciLCJpYXQiOjE1ODk3ODMxODAsImV4cCI6MTU4OTc5MDM4MCwiYXpwIjoiOUVhbGhIVFZVbXF3TW5uRjk0RFQwMEp1b0lIa1l0Y3giLCJzY29wZSI6IiIsInBlcm1pc3Npb25zIjpbImdldDpsaXN0cyJdfQ.holaJz2IcvJTMGLEvqFrSDZ1966Uy-q1nWURo12OtnHzuZQes2nfHfdtciZkkpJ87qzsRs8QnB0lyrTAV90MZPtdbC0z_785vrvQQZN0kz6uh6kTulqpgwJUJwvRjrYN-q5wVMsD66FgkE6mj-Nl8RjlSdtBz7Bfjg89MzZ7c3fX2QG3En_uWpA2KOkJu71vYegvXd6QMDj9OaFb3AgF1-uv8Mocpa98lYMOEk-H_mB7KEy67eCG3ys59D4_c4-F43DMW680m7rvuLrAbbTzhqBOAD-EMOYsOdCXzTd7bPZvRSsJwrSicaOwiPBSiwz0JnQMV0YoD5EsD77nPCu2XQ"
-        }
-
-    conn.request("GET", "/", headers=headers)
-
-    res = conn.getresponse()
-    data = res.read()
-
-    print(data.decode("utf-8"))
+    return functools.update_wrapper(no_cache_impl, view)

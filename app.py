@@ -3,7 +3,7 @@ from flask import Flask, request, abort, jsonify, make_response
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS, cross_origin
 from models import setup_db, Movies, Actors
-from auth.auth import AuthError, requires_auth
+from auth.auth import AuthError, requires_auth, no_cache
 
 from functools import wraps
 import json
@@ -17,6 +17,8 @@ from flask import session
 from flask import url_for
 from authlib.integrations.flask_client import OAuth
 from six.moves.urllib.parse import urlencode
+import http.client
+import datetime
 
 DATA_PER_PAGE = 10
 YOUR_CLIENT_SECRET = "-Cvi9-nsnz7vOMnv9OApmF4Twd1a7afTiXo2I42Zrl4WwO_clj6cbDRdH7Q9_guY"
@@ -24,11 +26,13 @@ YOUR_CALLBACK_URL = "http://localhost:5000/callback"
 SECRET_KEY = "aditicapstonendsecret"
 AUTH0_AUTHORIZE_URL = "https://udacity-nd-capstone.auth0.com/authorize?audience=casting&response_type=token&client_id=9EalhHTVUmqwMnnF94DT00JuoIHkYtcx&redirect_uri=http://localhost:5000/callback"
 
+database_path = os.environ['DATABASE_URL']
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     app.config['SECRET_KEY'] = SECRET_KEY
-    setup_db(app)
+    setup_db(app, database_path)
     CORS(app, expose_headers='Authorization')
 
     # oauth = OAuth(app)
@@ -56,10 +60,17 @@ def create_app(test_config=None):
         # print(response.headers)
         return response
 
+    @app.before_request
+    def before_request():
+        print('In before_request', datetime.datetime.now())
+        # print(request.headers)
+        # get_token_header()
+        # test="dhjdhjsa"
+
     @app.route('/login')
     def login():
         print('In login')
-        return auth0.authorize_redirect(redirect_uri=YOUR_CALLBACK_URL)
+        return auth0.authorize_redirect(redirect_uri=YOUR_CALLBACK_URL, audience='casting')
 
 
     @app.route('/logout')
@@ -67,7 +78,7 @@ def create_app(test_config=None):
         # Clear session stored data
         session.clear()
         # Redirect user to logout endpoint
-        params = {'returnTo': url_for('home', _external=True), 'client_id': '9EalhHTVUmqwMnnF94DT00JuoIHkYtcx'}
+        params = {'returnTo': url_for('dashboard', _external=True), 'client_id': '9EalhHTVUmqwMnnF94DT00JuoIHkYtcx'}
         return redirect(auth0.api_base_url + '/v2/logout?' + urlencode(params))
 
 
@@ -124,7 +135,7 @@ def create_app(test_config=None):
     # @cross_origin
     def index():
         token = request.args.get('access_token', default = '', type = str)
-        print('token', token)
+        print('Index token', token)
         session['jwt_token'] = token
         result = "Coming Soon!!"
         # print("request.headers in Index - ", request.headers)
@@ -149,6 +160,25 @@ def create_app(test_config=None):
           current_data = actors[start:end]
 
         return current_data
+
+    @app.route('/getcookie')
+    def get_token_header():
+        # print('request.cookies', request.cookies)
+        token = request.cookies.get('jwt_token')
+        print('get_token_header token', token)
+        conn = http.client.HTTPSConnection("localhost", 5000)
+
+        headers = {
+            # 'content-type': "application/json",
+            'Authorization': "Bearer "+token
+            }
+
+        conn.request("GET", "/movies", headers=headers)
+
+        res = conn.getresponse()
+        data = res.read()
+
+        print(data.decode("utf-8"))
 
 
     # Movies end points
@@ -177,11 +207,15 @@ def create_app(test_config=None):
             print('error in movies')
             raise
 
-        return render_template('movies.html', results=movs)
+        # return render_template('movies.html', results=movs)
+        return data
+        # return jsonify({'data': render_template('movies.html', results=movs)})
+
 
     # end point to add movie
     @app.route('/movies', methods=['POST'])
-    def movies_create():
+    @requires_auth('create:movie')
+    def movies_create(payload):
         try:
             print('Inside')
             body = request.get_json()
@@ -195,15 +229,17 @@ def create_app(test_config=None):
             print('In Add Movie', e)
             raise AuthError('Movie id not found.', status_code=404)
 
-        return jsonify({'success' : True})
+        return jsonify({'success' : True,
+                        'new id': movie.id})
 
     # end point to delete a movie
     @app.route('/movies/<int:movie_id>', methods=['DELETE'])
-    def movies_delete(movie_id):
+    @requires_auth('delete:movie')
+    def movies_delete(payload, movie_id):
         try:
             movie = Movies.query.filter(Movies.id==movie_id).one_or_none()
             if movie is None:
-                raise AuthError('Actor id not found.', status_code=404)
+                raise AuthError('Movie id not found.', status_code=404)
             movie.delete()
         except Exception as e:
             print('In Movie Delete Error')
@@ -213,7 +249,8 @@ def create_app(test_config=None):
 
     # end point to update a movie
     @app.route('/movies/<int:movie_id>', methods=['PATCH'])
-    def movies_update(movie_id):
+    @requires_auth('update:item')
+    def movies_update(payload, movie_id):
         try:
             body = request.get_json()
 
@@ -222,7 +259,7 @@ def create_app(test_config=None):
 
             movie = Movies.query.filter(Movies.id==movie_id).one_or_none()
             if movie is None:
-                raise AuthError('Actor id not found.', status_code=404)
+                raise AuthError('Movie id not found.', status_code=404)
 
             if req_title:
                 movie.title = req_title
@@ -241,7 +278,7 @@ def create_app(test_config=None):
     # end point to get list of actors
     @app.route('/actors')
     @requires_auth('get:lists')
-    def get_actors_all():
+    def get_actors_all(payload):
         # actors = "Check it Out!!"
         # return actors
         try:
@@ -263,11 +300,13 @@ def create_app(test_config=None):
         })
         print('actors list', acts)
 
-        return render_template('actors.html', results=acts)
+        # return render_template('actors.html', results=acts)
+        return data
 
     # end point to add actors
     @app.route('/actors', methods=['POST'])
-    def actors_create():
+    @requires_auth('create:actor')
+    def actors_create(payload):
         try:
             body = request.get_json()
             new_name = body.get('name', None)
@@ -280,11 +319,13 @@ def create_app(test_config=None):
             print('In Add Actor', e)
             raise AuthError('Actor id not found.', status_code=404)
 
-        return jsonify({'success' : True})
+        return jsonify({'success' : True,
+                        'new id': actor.id})
 
     # end point to delete a actor
     @app.route('/actors/<int:actor_id>', methods=['DELETE'])
-    def actors_delete(actor_id):
+    @requires_auth('delete:actor')
+    def actors_delete(payload, actor_id):
         try:
             actor = Actors.query.filter(Actors.id==actor_id).one_or_none()
             if actor is None:
@@ -300,7 +341,8 @@ def create_app(test_config=None):
 
     # end point to modify a actor
     @app.route('/actors/<int:actor_id>', methods=['PATCH'])
-    def actors_update(actor_id):
+    @requires_auth('update:item')
+    def actors_update(payload, actor_id):
         try:
             body = request.get_json()
             req_name = body.get('name', None)
