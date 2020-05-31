@@ -389,12 +389,28 @@ def create_app(test_config=None):
             'message': 'It is a Bad Request'
             }), 400
 
+    @app.errorhandler(401)
+    def not_authorized(error):
+        return jsonify({
+            'success': False,
+            'error': 401,
+            'message': 'It is a Bad Request'
+            }), 401
+
+    @app.errorhandler(403)
+    def permission_error(error):
+        return jsonify({
+            'success': False,
+            'error': 403,
+            'message': 'It is a Bad Request'
+            }), 403
+
     @app.errorhandler(404)
     def not_found(error):
         return jsonify({
             'success': False,
             'error': 404,
-            'message': 'Resource Not Found'
+            'message': 'Resource Not Found.'
             }), 404
 
     @app.errorhandler(405)
