@@ -24,7 +24,7 @@ DATA_PER_PAGE = 10
 YOUR_CLIENT_SECRET = "-Cvi9-nsnz7vOMnv9OApmF4Twd1a7afTiXo2I42Zrl4WwO_clj6cbDRdH7Q9_guY"
 YOUR_CALLBACK_URL = "http://localhost:5000/callback"
 SECRET_KEY = "aditicapstonendsecret"
-AUTH0_AUTHORIZE_URL = "https://udacity-nd-capstone.auth0.com/authorize?audience=casting&response_type=token&client_id=9EalhHTVUmqwMnnF94DT00JuoIHkYtcx&redirect_uri=http://localhost:5000/callback"
+AUTH0_AUTHORIZE_URL = "https://udacity-nd-capstone.auth0.com/authorize?audience=casting&response_type=token&client_id=9EalhHTVUmqwMnnF94DT00JuoIHkYtcx&redirect_uri=http://127.0.0.1:5000/callback"
 
 database_path = os.environ['DATABASE_URL']
 
