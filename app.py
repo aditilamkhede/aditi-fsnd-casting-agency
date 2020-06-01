@@ -227,7 +227,7 @@ def create_app(test_config=None):
             movie.insert()
         except Exception as e:
             print('In Add Movie', e)
-            raise AuthError('Movie id not found.', status_code=404)
+            raise AuthError(e, status_code=404)
 
         return jsonify({'success' : True,
                         'new id': movie.id})
