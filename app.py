@@ -219,6 +219,7 @@ def create_app(test_config=None):
         try:
             print('Inside')
             body = request.get_json()
+            print('body',body)
 
             new_title = body.get('title', None)
             new_relDate = body.get('release_date', None)
@@ -227,7 +228,7 @@ def create_app(test_config=None):
             movie.insert()
         except Exception as e:
             print('In Add Movie', e)
-            raise AuthError(e, status_code=404)
+            raise AuthError('Error in Create Movie.', status_code=404)
 
         return jsonify({'success' : True,
                         'new id': movie.id})
