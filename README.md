@@ -24,13 +24,13 @@ Python3, pip should be installed on local machine.
 
 ### Backend
 
-From the backend folder run requirements.txt.
+From the root folder run requirements.txt.
 
 pip install -r requirements.txt
 
 #### Database Setup
 Restore a database using the castingAgency.psql file provided.
-From the backend folder in terminal run:
+From the root folder in terminal run:
 
 psql castingAgency < castingAgency.psql
 
