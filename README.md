@@ -48,11 +48,14 @@ flask run
 Frontend is not complete yet. You can login using the login menu. Other menu options are just placeholders.
 
 ## Testing
-To run the tests navigate to backend folder and run the following commands:
+To run the tests navigate to root folder and run the following commands:
+
 
 dropdb capstone_test
 createdb capstone_test
 psql capstone_test < capstone_test.psql
+
+. setup.sh
 python3 test_app.py
 
 If you are running the commands first time, exclude dropdb command.
@@ -66,7 +69,7 @@ All tests are included in the test_app.py and should be maintained as updates ar
     1. Base URL: Application is hosted on Heroku. Application also runs locally. Application is hosted at
 
     https://aditi-fsnd-casting-agency.herokuapp.com/.
-    
+
     2. Authentication: Application uses auth0 API for authentication.
 
       Application has three roles with their respective RBAC:
