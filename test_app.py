@@ -20,7 +20,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.database_path = "postgres://{}/{}".format('localhost:5432', self.database_name)
         setup_db(self.app, self.database_path)
 
-        print('casting_assistant', os.environ['auth_token_cast_asst'])
+        # print('casting_assistant', os.environ['auth_token_cast_asst'])
         # client.environ_base['HTTP_AUTHORIZATION'] = 'Bearer your_token'
         # auth_header = { 'Authorization': 'Bearer {}'.format(os.environ['auth_token'])}
         # The access token is a string in the format of "Bearer ejyxhs..."
@@ -179,7 +179,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['success'], True)
 
     def test_delete_actor_casting_director(self):
-        res = self.client().delete('/actors/19', headers=self.casting_director)
+        res = self.client().delete('/actors/8', headers=self.casting_director)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -188,7 +188,7 @@ class CapstoneTestCase(unittest.TestCase):
     def test_delete_actor_404_not_found_casting_director(self):
         res = self.client().delete('/actors/1000', headers=self.casting_director)
         data = json.loads(res.data)
-        print(data)
+        # print(data)
 
         self.assertEqual(res.status_code, 404)
         # self.assertEqual(data['success'], False)
@@ -229,7 +229,7 @@ class CapstoneTestCase(unittest.TestCase):
         self.assertEqual(data['message'], 'Method not allowed, Please Check URL.')
 
     def test_delete_movie_executive_producer(self):
-        res = self.client().delete('/movies/17', headers=self.executive_producer)
+        res = self.client().delete('/movies/6', headers=self.executive_producer)
         data = json.loads(res.data)
 
         self.assertEqual(res.status_code, 200)
@@ -238,7 +238,7 @@ class CapstoneTestCase(unittest.TestCase):
     def test_delete_movie_404_not_found_executive_producer(self):
         res = self.client().delete('/movies/1000', headers=self.executive_producer)
         data = json.loads(res.data)
-        print('test_delete_movie_404_not_found_executive_producer', data)
+        # print('test_delete_movie_404_not_found_executive_producer', data)
 
         self.assertEqual(res.status_code, 404)
         # self.assertEqual(data['success'], False)

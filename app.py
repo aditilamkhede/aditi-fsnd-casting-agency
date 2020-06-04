@@ -202,7 +202,7 @@ def create_app(test_config=None):
                 'movies': movs,
                 'total_movies': len(movies)
                 })
-            print('Movies data', movs)
+            # print('Movies data', movs)
         except Exception as e:
             print('error in movies')
             raise
@@ -223,7 +223,7 @@ def create_app(test_config=None):
 
             new_title = body.get('title', None)
             new_relDate = body.get('release_date', None)
-            print(new_title)
+            # print(new_title)
             movie = Movies(title=new_title, release_date=new_relDate)
             movie.insert()
         except Exception as e:
@@ -299,7 +299,7 @@ def create_app(test_config=None):
             'actors': acts,
             'total_actors': len(actors)
         })
-        print('actors list', acts)
+        # print('actors list', acts)
 
         # return render_template('actors.html', results=acts)
         return data
