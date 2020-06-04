@@ -35,7 +35,38 @@
           WE ARE A FULL-SERVICE CASTING AGENCY, SETTING THE INDUSTRY STANDARD FOR OVER 20 YEARS
         </strong></p>
 
-        {% block content %}{% endblock %}
+        {% block content %}
+        <!-- <div class="gdContainer">
+          <div class="gdHeader">
+            <div class="hdItem">
+              <h3>ID</h3>
+            </div>
+            <div class="hdItem">
+              <h3>Movie Title</h3>
+            </div>
+            <div class="hdItem">
+              <h3>Release Date</h3>
+            </div>
+          </div>
+          <div class="line">
+
+          </div>
+          <div class="gdMain">
+
+          {% for data in results %}
+            <div class="item">
+              {{ data.id }}
+            </div>
+            <div class="item">
+              {{ data.title }}
+            </div>
+            <div class="item">
+              {{ data.release_date.strftime('%Y-%m-%d') }}
+            </div>
+          {% endfor %}
+          </div>
+        </div> -->
+        {% endblock %}
       </div>
       <div class="footer box">
         <div class="ftName">

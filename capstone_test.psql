@@ -1,0 +1,218 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 12.1
+-- Dumped by pg_dump version 12.1
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_table_access_method = heap;
+
+--
+-- Name: actors; Type: TABLE; Schema: public; Owner: aditi
+--
+
+CREATE TABLE public.actors (
+    id integer NOT NULL,
+    name character varying(255) NOT NULL,
+    age integer,
+    gender character varying(20)
+);
+
+
+ALTER TABLE public.actors OWNER TO aditi;
+
+--
+-- Name: actors_id_seq; Type: SEQUENCE; Schema: public; Owner: aditi
+--
+
+CREATE SEQUENCE public.actors_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.actors_id_seq OWNER TO aditi;
+
+--
+-- Name: actors_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: aditi
+--
+
+ALTER SEQUENCE public.actors_id_seq OWNED BY public.actors.id;
+
+
+--
+-- Name: mov_act_rel_table; Type: TABLE; Schema: public; Owner: aditi
+--
+
+CREATE TABLE public.mov_act_rel_table (
+    actor_id integer NOT NULL,
+    movie_id integer NOT NULL
+);
+
+
+ALTER TABLE public.mov_act_rel_table OWNER TO aditi;
+
+--
+-- Name: movies; Type: TABLE; Schema: public; Owner: aditi
+--
+
+CREATE TABLE public.movies (
+    id integer NOT NULL,
+    title character varying(255) NOT NULL,
+    release_date timestamp without time zone
+);
+
+
+ALTER TABLE public.movies OWNER TO aditi;
+
+--
+-- Name: movies_id_seq; Type: SEQUENCE; Schema: public; Owner: aditi
+--
+
+CREATE SEQUENCE public.movies_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.movies_id_seq OWNER TO aditi;
+
+--
+-- Name: movies_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: aditi
+--
+
+ALTER SEQUENCE public.movies_id_seq OWNED BY public.movies.id;
+
+
+--
+-- Name: actors id; Type: DEFAULT; Schema: public; Owner: aditi
+--
+
+ALTER TABLE ONLY public.actors ALTER COLUMN id SET DEFAULT nextval('public.actors_id_seq'::regclass);
+
+
+--
+-- Name: movies id; Type: DEFAULT; Schema: public; Owner: aditi
+--
+
+ALTER TABLE ONLY public.movies ALTER COLUMN id SET DEFAULT nextval('public.movies_id_seq'::regclass);
+
+
+--
+-- Data for Name: actors; Type: TABLE DATA; Schema: public; Owner: aditi
+--
+
+COPY public.actors (id, name, age, gender) FROM stdin;
+1	Actor2 M	28	Male
+2	Actor1 F	25	Female
+3	Actor3 F	25	Female
+4	Actor4 F	25	Female
+5	Actor5 F	25	Female
+6	Actor6 F	25	Female
+7	Actor7 F	25	Female
+8	Actor8 F	25	Female
+9	Actor9 F	25	Female
+\.
+
+
+--
+-- Data for Name: mov_act_rel_table; Type: TABLE DATA; Schema: public; Owner: aditi
+--
+
+COPY public.mov_act_rel_table (actor_id, movie_id) FROM stdin;
+\.
+
+
+--
+-- Data for Name: movies; Type: TABLE DATA; Schema: public; Owner: aditi
+--
+
+COPY public.movies (id, title, release_date) FROM stdin;
+1	Movie2	2008-05-22 00:00:00
+2	Movie1	2019-05-22 00:00:00
+3	Movie3	2019-05-22 00:00:00
+4	Movie4	2019-05-22 00:00:00
+5	Movie5	2019-05-22 00:00:00
+6	Movie6	2019-05-22 00:00:00
+7	Movie7	2019-05-22 00:00:00
+8	Movie8	2019-05-22 00:00:00
+9	Movie9	2019-05-22 00:00:00
+\.
+
+
+--
+-- Name: actors_id_seq; Type: SEQUENCE SET; Schema: public; Owner: aditi
+--
+
+SELECT pg_catalog.setval('public.actors_id_seq', 10, true);
+
+
+--
+-- Name: movies_id_seq; Type: SEQUENCE SET; Schema: public; Owner: aditi
+--
+
+SELECT pg_catalog.setval('public.movies_id_seq', 10, true);
+
+
+--
+-- Name: actors actors_pkey; Type: CONSTRAINT; Schema: public; Owner: aditi
+--
+
+ALTER TABLE ONLY public.actors
+    ADD CONSTRAINT actors_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: mov_act_rel_table mov_act_rel_table_pkey; Type: CONSTRAINT; Schema: public; Owner: aditi
+--
+
+ALTER TABLE ONLY public.mov_act_rel_table
+    ADD CONSTRAINT mov_act_rel_table_pkey PRIMARY KEY (movie_id, actor_id);
+
+
+--
+-- Name: movies movies_pkey; Type: CONSTRAINT; Schema: public; Owner: aditi
+--
+
+ALTER TABLE ONLY public.movies
+    ADD CONSTRAINT movies_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: mov_act_rel_table mov_act_rel_table_actor_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aditi
+--
+
+ALTER TABLE ONLY public.mov_act_rel_table
+    ADD CONSTRAINT mov_act_rel_table_actor_id_fkey FOREIGN KEY (actor_id) REFERENCES public.actors(id);
+
+
+--
+-- Name: mov_act_rel_table mov_act_rel_table_movie_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: aditi
+--
+
+ALTER TABLE ONLY public.mov_act_rel_table
+    ADD CONSTRAINT mov_act_rel_table_movie_id_fkey FOREIGN KEY (movie_id) REFERENCES public.movies(id);
+
+
+--
+-- PostgreSQL database dump complete
+--

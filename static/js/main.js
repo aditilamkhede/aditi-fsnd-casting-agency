@@ -69,15 +69,16 @@ function getCookie(name) {
         // Return null if not found
         return null;
     }
+
 $(document).ready( function() {
   console.log("In Document Ready");
-  let token = getCookie('jwt_token');
-  $.ajaxSetup({
-    headers:{
-      'Authorization': `Bearer ${token}`
-    }
-  });
-  
+  // let token = getCookie('jwt_token');
+  // $.ajaxSetup({
+  //   headers:{
+  //     'Authorization': `Bearer ${token}`
+  //   }
+  // });
+
   //  $('#navMovies').on('click', function(event) {
   //    console.log("in Click");
   //
@@ -133,10 +134,12 @@ function GetMovies() {
   // });
 
   $.ajax({
-         url: "http://localhost:5000/movies",
+         url: "/movies",
          // data: { signature: authHeader },
          type: "GET",
-         beforeSend: function(xhr){xhr.setRequestHeader('Authorization', `Bearer ${token}`);},
+         beforeSend: function(xhr){
+           xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+         },
          headers: {"Authorization": `Bearer ${token}`},
          success: function(result) {
            console.log('Success!'+result);

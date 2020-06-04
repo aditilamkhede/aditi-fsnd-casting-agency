@@ -217,9 +217,9 @@ def create_app(test_config=None):
     @requires_auth('create:movie')
     def movies_create(payload):
         try:
-            print('Inside')
+            print('Inside check Json')
             body = request.get_json()
-            print('body',body)
+            # print('body',request.get_json())
 
             new_title = body.get('title', None)
             new_relDate = body.get('release_date', None)
@@ -287,7 +287,7 @@ def create_app(test_config=None):
             acts = paginate_data(request, actors, False)
 
             if (len(acts) == 0):
-              raise AuthError('Actor id not found.', status_code=404)
+              raise AuthError('Error in actors list.', status_code=404)
               # return jsonify({
               #     'success': False})
         except Exception as e:
@@ -371,7 +371,7 @@ def create_app(test_config=None):
 
         return jsonify({
             'success': True,
-            'newActor': {'id':actor.id,
+            'updateActor': {'id':actor.id,
                          'name':actor.name,
                          'age':actor.age,
                          'gender': actor.gender
@@ -395,7 +395,7 @@ def create_app(test_config=None):
         return jsonify({
             'success': False,
             'error': 401,
-            'message': 'It is a Bad Request'
+            'message': 'Authorization header is expected.'
             }), 401
 
     @app.errorhandler(403)
@@ -403,7 +403,7 @@ def create_app(test_config=None):
         return jsonify({
             'success': False,
             'error': 403,
-            'message': 'It is a Bad Request'
+            'message': 'Payload does not contain "permissions" string.'
             }), 403
 
     @app.errorhandler(404)
