@@ -3,14 +3,15 @@ from flask import request, _request_ctx_stack, abort
 # , session, redirect
 import functools
 import flask
+import os
 from functools import wraps
 from jose import jwt
 from urllib.request import urlopen
 
-
-AUTH0_DOMAIN = 'udacity-nd-capstone.auth0.com'
-ALGORITHMS = ['RS256']
-API_AUDIENCE = 'casting'
+# export from setup.sh
+AUTH0_DOMAIN = os.environ.get('APP_AUTH0_DOMAIN')
+ALGORITHMS = [os.environ.get('ALGORITHMS')]
+API_AUDIENCE = os.environ.get('APP_API_AUDIENCE')
 
 ## AuthError Exception
 '''
