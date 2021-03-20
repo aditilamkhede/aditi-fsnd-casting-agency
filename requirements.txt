@@ -21,7 +21,7 @@ Flask-SQLAlchemy==2.4.0
 gunicorn==20.0.4
 idna==2.9
 itsdangerous==1.1.0
-Jinja2==2.10.1
+Jinja2==2.11.3
 jmespath==0.9.5
 lazy-object-proxy==1.4.0
 Mako==1.1.1
