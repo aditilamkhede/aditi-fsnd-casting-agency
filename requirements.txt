@@ -41,7 +41,7 @@ python-dotenv==0.13.0
 python-editor==1.0.4
 python-jose==3.1.0
 pytz==2019.1
-PyYAML==5.3.1
+PyYAML==5.4
 requests==2.23.0
 rsa==3.4.2
 s3transfer==0.3.3
